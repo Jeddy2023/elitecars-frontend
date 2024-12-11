@@ -19,6 +19,8 @@ const Overview = () => {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  console.log(messages)
+
   useEffect(() => {
     const fetchData = async () => {
       try {

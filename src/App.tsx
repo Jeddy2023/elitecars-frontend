@@ -9,7 +9,6 @@ import MainLayout from "./components/layout/MainLayout";
 import SignupPage from "./pages/SignUpPage";
 import AdminLayout from "./components/layout/AdminLayout";
 import AuthProtectedRoute from "./utils/protection/AuthProtectedRoute";
-import AdminOverview from "./components/admin/Overview";
 import UserManagement from "./components/admin/UserManagement";
 import VehicleManagement from "./components/admin/VehicleManagement";
 import VehiclesPage from "./pages/VehiclesPage";

@@ -2,7 +2,7 @@ import { fetchVehicles } from "../api/apiServices";
 
 export const buildQueryString = (params: Record<string, string | number | null>): string => {
     const queryString = Object.entries(params)
-        .filter(([key, value]) => value !== null && value !== '')
+        .filter(([value]) => value !== null && value !== '')
         .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value as string | number)}`)
         .join('&');
 

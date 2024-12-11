@@ -1,4 +1,4 @@
-import { LuHome } from "react-icons/lu";
+import { LuChrome } from "react-icons/lu";
 import { FiUsers } from "react-icons/fi";
 import { FaPowerOff } from "react-icons/fa";
 import { UserContext } from "../../hooks/userContext";
@@ -51,7 +51,7 @@ const Sidebar = () => {
               onClick={() => SetSelected("dashboard")}
               className={`flex items-center font-semibold align-middle gap-5 cursor-pointer hover:text-blue-500 ${selected === "dashboard" ? "text-blue-500" : "text-gray-600"}`}
             >
-              <LuHome size={open ? 18 : 21} />
+              <LuChrome size={open ? 18 : 21} />
               {open && <p className={`text-md ${open ? "transition-scale ease-in duration-50 scale-90" : ""}`}>Dashboard</p>}
             </Link>
             <Link to="/admin-dashboard/users"

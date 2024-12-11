@@ -1,9 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { LuLayoutDashboard } from "react-icons/lu";
 import { RiUserAddLine } from "react-icons/ri";
-import { TbHomeStats, TbBuildingBank } from "react-icons/tb";
 import { MdOutlinePowerSettingsNew } from "react-icons/md";
-import { FaBitcoin } from "react-icons/fa";
 import { useContext, useState } from 'react';
 import { UserContext } from '../../hooks/userContext';
 import ConfirmationModal from '../features/ConfirmationModal';

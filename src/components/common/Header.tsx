@@ -3,7 +3,6 @@ import { ActionIcon, Button, Flex, Stack } from '@mantine/core';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { IoPersonOutline, IoCloseSharp } from 'react-icons/io5';
-import { GoBell } from 'react-icons/go';
 import Logo from '../../assets/images/logo.png';
 import { HiMenuAlt3 } from 'react-icons/hi';
 import ThemeSwitcher from './ThemeSwitcher';

@@ -1,4 +1,3 @@
-import { LuHome } from "react-icons/lu";
 import { FiUsers } from "react-icons/fi";
 import { FaPowerOff } from "react-icons/fa";
 import { RxHamburgerMenu } from "react-icons/rx";
@@ -9,6 +8,7 @@ import { useContext, useState } from 'react';
 import ConfirmationModal from "../features/ConfirmationModal";
 import { UserContext } from "../../hooks/userContext";
 import { IoCarSportOutline } from "react-icons/io5";
+import { LuChrome } from "react-icons/lu";
 
 const SideBarDrawer = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -39,7 +39,7 @@ const SideBarDrawer = () => {
                 }}
                 className={`flex items-center align-middle gap-5 cursor-pointer hover:text-blue-500 ${selected === "dashboard" ? "text-blue-500" : ""}`}
               >
-                <LuHome size={15} />
+                <LuChrome size={15} />
                 <p className="text-lg transition-scale ease-in duration-50 scale-90">Dashboard</p>
               </Link>
               <Link to="/admin-dashboard/users"

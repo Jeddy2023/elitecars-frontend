@@ -15,6 +15,8 @@ const VehiclesPage: React.FC<Props> = ({ }) => {
     const [transmission, setTransmission] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [fetchTrigger, setFetchTrigger] = useState<boolean>(true);
+    console.log(setFuelType, setSearch, setTransmission)
+
 
     useEffect(() => {
         if (fetchTrigger) {
