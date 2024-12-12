@@ -5,6 +5,7 @@ import { styles } from '../components/styles/styles';
 import Loader from '../components/common/Loader';
 import VehicleCard from '../components/common/VehicleCard';
 import NoAuctions from '../assets/images/empty-animate.svg';
+import VehicleSidebar from '../components/features/VehicleSidebar';
 
 type Props = {}
 
@@ -17,6 +18,24 @@ const VehiclesPage: React.FC<Props> = ({ }) => {
     const [fetchTrigger, setFetchTrigger] = useState<boolean>(true);
     console.log(setFuelType, setSearch, setTransmission)
 
+
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(event.target.value);
+        const searchParams = new URLSearchParams(window.location.search);
+        searchParams.delete('search');
+        searchParams.set('search', event.target.value);
+        window.history.replaceState(null, '', `?${searchParams.toString()}`);
+    };
+
+    const clearFunction = (value: string) => {
+        switch (value) {
+            case 'search':
+                setSearch('');
+                break;
+            default:
+                setSearch('');
+        }
+    };
 
     useEffect(() => {
         if (fetchTrigger) {
@@ -78,6 +97,11 @@ const VehiclesPage: React.FC<Props> = ({ }) => {
                             </div>
                         )}
                     </div>
+                    <VehicleSidebar
+                        search={search}
+                        handleSearchChange={handleSearchChange  }
+                        clearFunction={clearFunction}
+                    />
                 </div>
             </div>
         </div>
