@@ -59,8 +59,8 @@ export type VehicleSchemaType = z.infer<typeof vehicleSchema>;
 export const createBookingSchema = z.object({
     pickup_location: z.string().nonempty({ message: "Pickup location is required" }),
     drop_off_location: z.string().nonempty({ message: "Drop-off location is required" }),
-    start_date: z.string().nonempty({ message: "Start date is required" }),
-    end_date: z.string().nonempty({ message: "End date is required" }),
+    start_date: z.date({ required_error: "Start date is required" }),
+    end_date: z.date({ required_error: "End date is required" }),
 });
 
 export type CreateBookingSchemaType = z.infer<typeof createBookingSchema>;

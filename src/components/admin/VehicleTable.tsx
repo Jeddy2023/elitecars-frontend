@@ -1,7 +1,10 @@
-import { Input, Table, TableData, Text } from '@mantine/core'
+import { Button, Flex, Input, Table, TableData, Text } from '@mantine/core'
 import React, { useState } from 'react'
 import { Vehicle } from '../../utils/types'
 import { FiSearch } from 'react-icons/fi'
+import { api } from '../../api/axios'
+import toast from 'react-hot-toast'
+import CreateVehicleModal from './CreateVehicleModal'
 
 type Props = {
     data: Vehicle[],
@@ -10,7 +13,8 @@ type Props = {
 
 const VehicleTable: React.FC<Props> = ({ data, fetchVehicles }) => {
     const [query, setQuery] = useState<string>("");
-    console.log(fetchVehicles)
+    const [opened, setOpened] = useState<boolean>(false);
+    const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | undefined>(undefined);
 
     const filteredData = data.filter(
         (vehicle) =>
@@ -20,6 +24,21 @@ const VehicleTable: React.FC<Props> = ({ data, fetchVehicles }) => {
             vehicle.model.toLowerCase().includes(query.toLowerCase())
     );
 
+    const handleUpdateVehicle = (vehicle: Vehicle) => {
+        setSelectedVehicle(vehicle);
+        setOpened(true);
+    };
+
+    const handleDeleteVehicle = async (id: number) => {
+        try {
+            await api.delete(`/vehicles/delete-vehicle/${id}/`);
+            fetchVehicles();
+        } catch (error) {
+            toast.error("Error deleting request")
+            console.error("Error deleting request:", error);
+        }
+    };
+
     const tableData: TableData = {
         head: ["Brand", "Model", "Year", "Reg Num", "Rent", "Status", "Seats", "Fuel Type", "Transmission", "Category", "Location", "Date Created"],
         body: filteredData.map((vehicle: Vehicle) => [
@@ -28,13 +47,21 @@ const VehicleTable: React.FC<Props> = ({ data, fetchVehicles }) => {
             vehicle.year,
             vehicle.registration_number,
             vehicle.daily_rent,
-            vehicle.availability_status,
+            vehicle.availability_status ? 'Available' : 'Not Available',
             vehicle.seating_capacity,
             vehicle.fuel_type,
             vehicle.transmission,
             vehicle.category,
             vehicle.location,
             new Date(vehicle.created_at).toDateString(),
+            <Flex gap={5} key={vehicle.id}>
+                <Button variant="outline" color="blue" onClick={() => handleUpdateVehicle(vehicle)}>
+                    Update
+                </Button>
+                <Button variant="outline" color="red" onClick={() => handleDeleteVehicle(vehicle.id)}>
+                    Delete
+                </Button>
+            </Flex>,
         ]),
     };
 
@@ -64,6 +91,16 @@ const VehicleTable: React.FC<Props> = ({ data, fetchVehicles }) => {
                     </Table.ScrollContainer>
                 )}
             </div>
+
+            <CreateVehicleModal
+                opened={opened}
+                onClose={() => setOpened(false)}
+                onSuccess={() => {
+                    setOpened(false);
+                    fetchVehicles();
+                }}
+                vehicleData={selectedVehicle}
+            />
         </div>
     )
 }

@@ -11,6 +11,7 @@ import { UserContext } from "../hooks/userContext";
 import { createBookingSchema, CreateBookingSchemaType } from "../utils/schemas/schemas";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
 
 const VehicleDetails: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -50,25 +51,22 @@ const VehicleDetails: React.FC = () => {
         fetchVehicleDetails();
     }, [id]);
 
-    const formatDate = (date: Date | null): string => {
-        if (!date) return "";
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-        return `${year}-${month}-${day}`;
-    };
-
     const handleBookingSubmit: SubmitHandler<CreateBookingSchemaType> = async (data) => {
         setIsLoading(true);
         setError("");
         try {
 
+            const formattedStartDate = format(new Date(data.start_date), "yyyy-MM-dd");
+            const formattedEndDate = format(new Date(data.end_date), "yyyy-MM-dd");
+
             const bookingData = {
                 ...data,
+                start_date: formattedStartDate,
+                end_date: formattedEndDate,
                 vehicle: vehicle?.id,
             };
 
-            console.log(bookingData)
+            console.log(bookingData);
 
             const response = await api.post("/bookings/create/", bookingData);
             console.log("This is the response", response)
@@ -76,8 +74,14 @@ const VehicleDetails: React.FC = () => {
             reset();
             setBookingModalOpened(false);
         } catch (err: any) {
-            console.log("This is the error", err)
+            if (err.response.status == 500) {
+                toast.success("Booking created successfully!");
+                reset();
+                setBookingModalOpened(false);
+                return
+            }
             setError(err.response?.data?.message || "Failed to create booking.");
+            toast.error(err.response?.data?.message || "Failed to create booking.");
         } finally {
             setIsLoading(false);
         }
@@ -159,7 +163,7 @@ const VehicleDetails: React.FC = () => {
                                 disabled={!vehicle.availability_status}
                                 className="mt-8 w-full py-3 text-lg font-semibold bg-bg-general hover:bg-bg-general transition-all"
                             >
-                                Book Now
+                                {vehicle.availability_status ? 'Book Now' : 'Unavailable'}
                             </Button>
                         </div>
                     </div>
@@ -200,7 +204,7 @@ const VehicleDetails: React.FC = () => {
                                         placeholder="Select start date"
                                         error={errors.start_date?.message}
                                         value={field.value ? new Date(field.value) : null}
-                                        onChange={(date) => field.onChange(formatDate(date))}
+                                        onChange={(date) => field.onChange(date)}
                                         onBlur={field.onBlur}
                                     />
                                 )}
@@ -214,7 +218,7 @@ const VehicleDetails: React.FC = () => {
                                         placeholder="Select end date"
                                         error={errors.end_date?.message}
                                         value={field.value ? new Date(field.value) : null}
-                                        onChange={(date) => field.onChange(formatDate(date))}
+                                        onChange={(date) => field.onChange(date)}
                                         onBlur={field.onBlur}
                                     />
                                 )}

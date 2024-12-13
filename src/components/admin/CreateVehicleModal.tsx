@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Modal, TextInput, Button, Select, NumberInput, LoadingOverlay, Alert } from "@mantine/core";
@@ -7,14 +7,16 @@ import { toast } from "react-hot-toast";
 import { api } from "../../api/axios";
 import { vehicleSchema, VehicleSchemaType } from "../../utils/schemas/schemas";
 import { useTheme } from "../../hooks/ThemeContext";
+import { Vehicle } from "../../utils/types";
 
 interface CreateVehicleModalProps {
     opened: boolean;
     onClose: () => void;
     onSuccess: () => void;
+    vehicleData?: Vehicle;
 }
 
-const CreateVehicleModal: React.FC<CreateVehicleModalProps> = ({ opened, onClose, onSuccess }) => {
+const CreateVehicleModal: React.FC<CreateVehicleModalProps> = ({ opened, onClose, onSuccess, vehicleData }) => {
     const {
         register,
         handleSubmit,
@@ -32,6 +34,24 @@ const CreateVehicleModal: React.FC<CreateVehicleModalProps> = ({ opened, onClose
     const { getCurrentTheme } = useTheme();
     const currentTheme = getCurrentTheme();
 
+    useEffect(() => {
+        if (vehicleData) {
+            setValue("brand", vehicleData.brand);
+            setValue("model", vehicleData.model);
+            setValue("year", vehicleData.year);
+            setValue("registration_number", vehicleData.registration_number);
+            setValue("daily_rent", String(vehicleData.daily_rent));
+            setValue("availability_status", vehicleData.availability_status);
+            setValue("seating_capacity", vehicleData.seating_capacity);
+            setValue("fuel_type", vehicleData.fuel_type);
+            setValue("transmission", vehicleData.transmission);
+            setValue("category", vehicleData.category);
+            setValue("location", vehicleData.location);
+        } else {
+            reset(); 
+        }
+    }, [vehicleData, setValue, reset]);
+
     const onSubmit: SubmitHandler<VehicleSchemaType> = async (data) => {
         setIsLoading(true);
         setError("");
@@ -47,11 +67,15 @@ const CreateVehicleModal: React.FC<CreateVehicleModalProps> = ({ opened, onClose
 
 
         try {
-            const response = await api.post("/vehicles/create/", formData, {
+            const response = vehicleData 
+            ? await api.put(`/vehicles/update/${vehicleData.id}/`, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            })
+            : await api.post("/vehicles/create/", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
-            console.log("Response", response)
-            toast.success(response.data.message || "Vehicle created successfully!");
+
+            vehicleData ? toast.success(response.data.message || "Vehicle updated successfully!") : toast.success(response.data.message || "Vehicle created successfully!");
             reset();
             // setImages([]);
             onSuccess();
@@ -176,7 +200,7 @@ const CreateVehicleModal: React.FC<CreateVehicleModalProps> = ({ opened, onClose
                 </div>
 
                 <Button type="submit" fullWidth color="blue" mt="md" loading={isLoading}>
-                    Create Vehicle
+                    {vehicleData ? "Update Vehicle" : "Create Vehicle"}
                 </Button>
             </form>
         </Modal>

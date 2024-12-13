@@ -20,9 +20,9 @@ export interface Vehicle {
     daily_rent: number;
     availability_status: boolean; 
     seating_capacity: number;
-    fuel_type: string; 
-    transmission: string; 
-    category: string;
+    fuel_type: "Petrol" | "Diesel" | "Electric"; 
+    transmission: "Automatic" | "Manual"; 
+    category: "SUV" | "Sedan" | "Hatchback";
     location: string; 
     image_data: {
         public_id: string;

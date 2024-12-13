@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Booking } from '../../utils/types'
-import { Input, Table, TableData, Text } from '@mantine/core'
+import { Button, Input, Table, TableData, Text } from '@mantine/core'
 import { FiSearch } from 'react-icons/fi'
+import UpdateBookingStatusModal from './UpdateBookingStatusModal'
+import { UserContext } from '../../hooks/userContext'
 
 type Props = {
   data: Booking[],
@@ -10,13 +12,20 @@ type Props = {
 
 const BookingTable: React.FC<Props> = ({ data, fetchBookings }) => {
   const [query, setQuery] = useState<string>("");
-  console.log(fetchBookings)
+  const [opened, setOpened] = useState<boolean>(false);
+  const [selectedBooking, setSelectedBooking] = useState<Booking | undefined>(undefined);
+  const { user } = useContext(UserContext);
 
   const filteredData = data.filter(
     (booking) =>
       booking.user.full_name.toLowerCase().includes(query.toLowerCase()) ||
       booking.vehicle.registration_number.toLowerCase().includes(query.toLowerCase())
   );
+
+  const handleUpdateBooking = (booking: Booking) => {
+    setSelectedBooking(booking);
+    setOpened(true);
+  };
 
   const tableData: TableData = {
     head: ["User", "Vehicle", "Pickup", "Drop Off", "Booking Date", "Start Date", "End Date", "Total Cost", "Status", "Date Created"],
@@ -31,6 +40,15 @@ const BookingTable: React.FC<Props> = ({ data, fetchBookings }) => {
       booking.total_cost,
       booking.status,
       new Date(booking.created_at).toDateString(),
+      user?.role === "admin" ? (
+        <Button variant="outline" color="blue" onClick={() => handleUpdateBooking(booking)}>
+          Update Status
+        </Button>
+      ) : (
+        <Button variant="outline" color="blue" onClick={() => alert('Contact admin for updates')}>
+          Cancel Booking
+        </Button>
+      ),
     ]),
   };
 
@@ -60,6 +78,16 @@ const BookingTable: React.FC<Props> = ({ data, fetchBookings }) => {
           </Table.ScrollContainer>
         )}
       </div>
+
+      <UpdateBookingStatusModal
+        opened={opened}
+        onClose={() => setOpened(false)}
+        bookingData={selectedBooking}
+        onSuccess={() => {
+          setOpened(false);
+          fetchBookings();
+        }}
+      />
     </div>
   )
 }
