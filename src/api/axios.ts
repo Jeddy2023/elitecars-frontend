@@ -2,9 +2,9 @@ import axios from "axios";
 import Cookies from 'js-cookie';
 
 export const api = axios.create({
-    baseURL: "http://127.0.0.1:8000/api/v1",
+    // baseURL: "http://127.0.0.1:8000/api/v1",
     // baseURL: "https://elite-cars-backend.vercel.app/api/v1",
-    // baseURL: "https://elite-cars-backend.onrender.com/api/v1",
+    baseURL: "https://elite-cars-backend.onrender.com/api/v1",
     timeout: 10000,
 });
 
