@@ -11,7 +11,7 @@ const UserLayout: React.FC = () => {
       <div className={`max-w-[255px] bg-white ease-in-out duration-300 border border-l-4`}>
         <Sidebar isSidebarExpanded={isSidebarExpanded} />
       </div>
-      <div className="w-full">
+      <div className="w-full overflow-hidden">
         <div className="flex justify-center w-full sticky top-0 bg-white z-30">
           <UserHeader setIsSidebarExpanded={setIsSidebarExpanded} />
         </div>

@@ -1,7 +1,10 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Booking } from '../../utils/types'
-import { Input, Table, TableData, Text } from '@mantine/core'
+import { Button, Input, Table, TableData, Text } from '@mantine/core'
 import { FiSearch } from 'react-icons/fi'
+import { UserContext } from '../../hooks/userContext'
+import toast from 'react-hot-toast'
+import { api } from '../../api/axios'
 
 type Props = {
   data: Booking[],
@@ -10,7 +13,8 @@ type Props = {
 
 const BookingTable: React.FC<Props> = ({ data, fetchBookings }) => {
   const [query, setQuery] = useState<string>("");
-  console.log(fetchBookings)
+  const { user } = useContext(UserContext);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const filteredData = data.filter(
     (booking) =>
@@ -18,8 +22,21 @@ const BookingTable: React.FC<Props> = ({ data, fetchBookings }) => {
       booking.vehicle.registration_number.toLowerCase().includes(query.toLowerCase())
   );
 
+  const cancelBooking = async (bookingId: number) => {
+    setLoading(true);
+
+    try {
+      await api.post(`/bookings/cancel/${bookingId}/`);
+      fetchBookings();
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Failed to cancel booking. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const tableData: TableData = {
-    head: ["User", "Vehicle", "Pickup", "Drop Off", "Booking Date", "Start Date", "End Date", "Total Cost", "Status", "Date Created"],
+    head: ["User", "Vehicle", "Pickup", "Drop Off", "Booking Date", "Start Date", "End Date", "Total Cost", "Status", "Date Created", "Actions"],
     body: filteredData.map((booking: Booking) => [
       booking.user.full_name,
       booking.vehicle.registration_number,
@@ -31,6 +48,12 @@ const BookingTable: React.FC<Props> = ({ data, fetchBookings }) => {
       booking.total_cost,
       booking.status,
       new Date(booking.created_at).toDateString(),
+      user?.role === "user" && <Button variant="outline" color="red"
+        onClick={() => cancelBooking(booking.id)}
+        loading={loading}
+        disabled={booking.status === 'Cancelled' || booking.status === 'Completed'}>
+        Cancel Booking
+      </Button>
     ]),
   };
 

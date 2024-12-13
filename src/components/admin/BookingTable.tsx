@@ -28,7 +28,7 @@ const BookingTable: React.FC<Props> = ({ data, fetchBookings }) => {
   };
 
   const tableData: TableData = {
-    head: ["User", "Vehicle", "Pickup", "Drop Off", "Booking Date", "Start Date", "End Date", "Total Cost", "Status", "Date Created"],
+    head: ["User", "Vehicle", "Pickup", "Drop Off", "Booking Date", "Start Date", "End Date", "Total Cost", "Status", "Date Created", "Actions"],
     body: filteredData.map((booking: Booking) => [
       booking.user.full_name,
       booking.vehicle.registration_number,
@@ -40,20 +40,14 @@ const BookingTable: React.FC<Props> = ({ data, fetchBookings }) => {
       booking.total_cost,
       booking.status,
       new Date(booking.created_at).toDateString(),
-      user?.role === "admin" ? (
-        <Button variant="outline" color="blue" onClick={() => handleUpdateBooking(booking)}>
-          Update Status
-        </Button>
-      ) : (
-        <Button variant="outline" color="blue" onClick={() => alert('Contact admin for updates')}>
-          Cancel Booking
-        </Button>
-      ),
+      user?.role === "admin" && <Button variant="outline" color="blue" onClick={() => handleUpdateBooking(booking)}>
+        Update Status
+      </Button>
     ]),
   };
 
   return (
-    <div className="mt-5 p-3 border">
+    <div className="mt-5 p-3 border overflow-hidden">
       <div className="w-full min-h-20 border-b flex items-center justify-between p-3">
         <p className="font-semibold">Bookings</p>
         <p className="text-blue-700">Bookings Table</p>

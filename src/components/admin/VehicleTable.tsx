@@ -15,6 +15,7 @@ const VehicleTable: React.FC<Props> = ({ data, fetchVehicles }) => {
     const [query, setQuery] = useState<string>("");
     const [opened, setOpened] = useState<boolean>(false);
     const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | undefined>(undefined);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const filteredData = data.filter(
         (vehicle) =>
@@ -30,12 +31,16 @@ const VehicleTable: React.FC<Props> = ({ data, fetchVehicles }) => {
     };
 
     const handleDeleteVehicle = async (id: number) => {
+        setLoading(true);
+
         try {
             await api.delete(`/vehicles/delete-vehicle/${id}/`);
             fetchVehicles();
-        } catch (error) {
-            toast.error("Error deleting request")
+        } catch (error: any) {
+            toast.error(error?.response?.data?.message || "Error deleting request")
             console.error("Error deleting request:", error);
+        } finally {
+            setLoading(false)
         }
     };
 
@@ -58,7 +63,7 @@ const VehicleTable: React.FC<Props> = ({ data, fetchVehicles }) => {
                 <Button variant="outline" color="blue" onClick={() => handleUpdateVehicle(vehicle)}>
                     Update
                 </Button>
-                <Button variant="outline" color="red" onClick={() => handleDeleteVehicle(vehicle.id)}>
+                <Button variant="outline" color="red" onClick={() => handleDeleteVehicle(vehicle.id)} loading={loading}>
                     Delete
                 </Button>
             </Flex>,
