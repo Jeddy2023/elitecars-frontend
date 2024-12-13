@@ -88,7 +88,6 @@ const UpdateBookingStatusModal: React.FC<UpdateBookingStatusModalProps> = ({
                         { value: "Pending", label: "Pending" },
                         { value: "Confirmed", label: "Confirmed" },
                         { value: "Completed", label: "Completed" },
-                        { value: "Cancelled", label: "Cancelled" },
                     ]}
                     value={watch("status") || ""}
                     onChange={(value) => setValue("status", value!)}
